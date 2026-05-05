@@ -51,7 +51,8 @@ git --version
 
 > **Screenshot 1:** Take a screenshot of your terminal showing both version
 > checks and insert it here.
->
+><img width="811" height="83" alt="DBMS3_1" src="https://github.com/user-attachments/assets/dbe9a476-a4cb-4746-94b4-6876633bc183" />
+
 > `[insert screenshot]`
 
 ---
@@ -294,7 +295,8 @@ sqlite3 library.db < schema.sql
 > **Screenshot 2:** Take a screenshot of the terminal showing the `.tables`
 > output and insert it here.
 >
-> `[insert screenshot]`
+> `[insert screenshot]`<img width="593" height="42" alt="DBMS3_2" src="https://github.com/user-attachments/assets/df0251ac-834e-4554-b771-0fd6320cefb0" />
+
 
 ### Task 2c – Commit
 
