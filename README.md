@@ -175,14 +175,15 @@ Complete the sketch for all six relations (`author`, `book`, `writes`, `copy`,
 > relational model? What would go wrong if you stored multiple author IDs in a
 > single column of `book`?
 >
-> *Your answer:*
+> *Your answer:* Violates 1NF
+> Deletion gets harder
 
 > **Question 1.2:** `loan_id` is a surrogate key even though a loan might seem
 > to be uniquely identified by `(member_no, copy_no, loan_date)`. Name one
 > realistic scenario in which that composite key would fail to be a candidate
 > key.
 >
-> *Your answer:*
+> *Your answer:* one person loaning a Copy twice on the same day
 
 ---
 
@@ -346,12 +347,12 @@ git log --oneline
 `writes`. What does this mean in practice if a librarian wants to delete an
 author who has written at least one book in the catalogue?
 
-> *Your answer:*
+> *Your answer:* The rows in writes have to be deleted first
 
 **Question 2.2:** `email` in `member` is declared `UNIQUE` but is not the
 primary key. Using the vocabulary from Lecture 03, what kind of key is it?
 
-> *Your answer:*
+> *Your answer:*Alternativer Schlüssel
 
 **Question 2.3:** SQLite does not enforce `CHECK` or `FOREIGN KEY` constraints
 by default. Run the following and observe what happens:
@@ -469,7 +470,9 @@ $$\sigma_{\mathrm{shelf\_loc}\ \mathrm{LIKE}\ \texttt{'A\%'}}(\textsc{copy})$$
 SQL:
 
 ```sql
--- write your query here
+SELECT CopyNo
+FROM Copy
+WHERE ShelfLocation LIKE 'A%';
 ```
 
 > Expected result: copy\_no 1 and 2.
@@ -484,7 +487,8 @@ $$\pi_{\mathrm{title},\,\mathrm{pub\_year}}(\textsc{book})$$
 SQL:
 
 ```sql
--- write your query here
+SELECT Title, PublicationYear
+FROM Book;
 ```
 
 > Expected result: three rows, two columns each.
@@ -500,7 +504,9 @@ $$\pi_{\mathrm{isbn},\,\mathrm{shelf\_loc}}\!\left(\sigma_{\mathrm{shelf\_loc} \
 SQL:
 
 ```sql
--- write your query here
+SELECT isbn, ShelfLocation
+FROM Copy
+WHERE ShelfLocation >='B';
 ```
 
 > Expected result: copy\_no 3 (B-07) and copy\_no 4 (C-12).
@@ -521,7 +527,14 @@ $$\pi_{\mathrm{full\_name},\,\mathrm{title}}\!\left(
 SQL:
 
 ```sql
--- write your query here
+SELECT 
+    m.FirstName || ' ' || m.LastName AS FullName,
+    b.Title
+FROM Loan l
+JOIN Member m ON l.member_no = m.MemberNo
+JOIN Copy c   ON l.copy_no   = c.CopyNo
+JOIN Book b   ON c.isbn      = b.ISBN
+WHERE l.ReturnDate IS NULL;
 ```
 
 > Expected result: two rows – Schneider borrowing *Database Management Systems*,
@@ -565,7 +578,20 @@ $$\pi_{\mathrm{isbn}}(\textsc{book}) - \pi_{\mathrm{isbn}}\!\left(\textsc{copy} 
 In SQL, set difference is expressed with `EXCEPT`:
 
 ```sql
--- write your query here
+SELECT 
+    b.Title,
+    c.CopyNo
+FROM Copy c
+JOIN Book b ON c.isbn = b.ISBN
+
+EXCEPT
+
+SELECT 
+    b.Title,
+    c.CopyNo
+FROM Copy c
+JOIN Book b ON c.isbn = b.ISBN
+JOIN Loan l ON c.CopyNo = l.copy_no;
 ```
 
 > Expected result: *The C Programming Language* (copy 4 was never loaned).
